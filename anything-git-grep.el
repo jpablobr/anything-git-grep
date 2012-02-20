@@ -1,32 +1,20 @@
 ;;; anything-git-grep.el --- Quick listing and execution of rake tasks.
-
 ;; This file is not part of Emacs
-
 ;; Copyright (C) 2011 Jose Pablo Barrantes
 ;; Created: 18/Dec/11
 ;; Version: 0.1.0
-
 ;;; Installation:
-
 ;; Put this file where you defined your `load-path` directory or just
 ;; add the following line to your emacs config file:
-
 ;; (load-file "/path/to/anything-git-grep.el")
-
 ;; Finally require it:
-
 ;; (require 'anything-git-grep)
-
 ;; Usage:
 ;; M-x anything-git-grep
-
 ;; There is no need to setup load-path with add-to-list if you copy
 ;; `anything-git-grep.el` to load-path directories.
-
 ;; Requirements:
-
 ;; http://www.emacswiki.org/emacs/Anything
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -45,9 +33,7 @@
 ;; Floor, Boston, MA 02110-1301, USA.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (require 'anything)
-
 ;;; --------------------------------------------------------------------
 ;;; - Customization
 ;;;
@@ -90,7 +76,7 @@
        "anything-git-grep-process" nil
        (format anything-git-grep-cmd
                (anything-git-grep-find-repo
-                (shell-command-to-string "pwd"))
+                default-directory)
                anything-pattern))
     (set-process-sentinel
      (get-process "anything-git-grep-process")
@@ -102,6 +88,7 @@
              (anything-update-move-first-line)))))))
 
 (defun anything-git-grep-fontify ()
+  (goto-char 1)
   (while (re-search-forward ":\\([0-9]+\\):" nil t)
     (put-text-property (point-at-bol) (match-beginning 0)
                        'face compilation-info-face)
@@ -114,7 +101,7 @@
   (save-match-data
     (setq file-full-path
           (concat
-           (anything-git-grep-find-repo (shell-command-to-string "pwd"))
+           (anything-git-grep-find-repo default-directory)
            (substring candidate 0 (match-beginning 0))))
     (if (file-exists-p file-full-path)
         (find-file file-full-path)))
