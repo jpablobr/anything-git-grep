@@ -34,6 +34,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'anything)
+
 ;;; --------------------------------------------------------------------
 ;;; - Customization
 ;;;
@@ -52,7 +53,6 @@
     (candidates . anything-git-grep-init)
     (requires-pattern . 1)
     (candidate-number-limit . 9999)
-    (candidates-in-buffer)
     (action . anything-git-grep-action))
   "Find files matching the current input pattern.")
 
@@ -82,19 +82,20 @@
      (get-process "anything-git-grep-process")
      #'(lambda (process event)
          (when (string= event "finished\n")
-           (kill-local-variable 'mode-line-format)
            (with-anything-window
+             (kill-local-variable 'mode-line-format)
+             (anything-update-move-first-line)
              (anything-git-grep-fontify)
-             (anything-update-move-first-line)))))))
-
-(defun anything-git-grep-fontify ()
-  (goto-char 1)
-  (while (re-search-forward ":\\([0-9]+\\):" nil t)
-    (put-text-property (point-at-bol) (match-beginning 0)
-                       'face compilation-info-face)
-    (put-text-property (match-beginning 1) (match-end 1)
-                       'face compilation-line-face)
-    (forward-line 1)))
+             (setq mode-line-format
+                   '(" " mode-line-buffer-identification " "
+                     (line-number-mode "%l") " "
+                     (:eval (propertize
+                             (format "[Grep Process Finished - (%s results)] "
+                                     (let ((nlines (1- (count-lines
+                                                        (point-min)
+                                                        (point-max)))))
+                                       (if (> nlines 0) nlines 0)))
+                             'face 'anything-grep-finish))))))))))
 
 (defun anything-git-grep-action (candidate)
   (string-match ":\\([0-9]+\\):" candidate)
@@ -108,6 +109,20 @@
   (goto-line (string-to-number (match-string 1 candidate)))
   (if (get-buffer *anything-git-grep-buffer-name*)
       (kill-buffer *anything-git-grep-buffer-name*)))
+
+(defun anything-git-grep-fontify ()
+  (goto-char 1)
+  (while (re-search-forward (concat
+                             "\\(.*\\)\\(:\\)\\([0-9]+\\)\\(:\\)\\(.*\\)\\("
+                             anything-pattern
+                             "\\)\\(.*\\)") nil t)
+    (put-text-property (match-beginning 1) (match-end 1)
+                       'face compilation-info-face)
+    (put-text-property (match-beginning 3) (match-end 3)
+                       'face compilation-line-face)
+    (put-text-property (match-beginning 6) (match-end 6)
+                       'face compilation-warning-face)
+    (forward-line 1)))
 
 ;;;###autoload
 (defun anything-git-grep ()
