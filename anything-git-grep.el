@@ -90,7 +90,7 @@
                    '(" " mode-line-buffer-identification " "
                      (line-number-mode "%l") " "
                      (:eval (propertize
-                             (format "[Grep Process Finished - (%s results)] "
+                             (format "[Git Grep Process Finished - (%s results)] "
                                      (let ((nlines (1- (count-lines
                                                         (point-min)
                                                         (point-max)))))
