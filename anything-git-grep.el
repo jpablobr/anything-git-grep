@@ -1,18 +1,25 @@
 ;;; anything-git-grep.el --- Quick listing and execution of rake tasks.
 ;; This file is not part of Emacs
+
 ;; Copyright (C) 2011 Jose Pablo Barrantes
 ;; Created: 18/Dec/11
 ;; Version: 0.1.0
+
 ;;; Installation:
 ;; Put this file where you defined your `load-path` directory or just
 ;; add the following line to your emacs config file:
+
 ;; (load-file "/path/to/anything-git-grep.el")
+
 ;; Finally require it:
 ;; (require 'anything-git-grep)
+
 ;; Usage:
 ;; M-x anything-git-grep
+
 ;; There is no need to setup load-path with add-to-list if you copy
 ;; `anything-git-grep.el` to load-path directories.
+
 ;; Requirements:
 ;; http://www.emacswiki.org/emacs/Anything
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
